@@ -21,3 +21,4 @@ typedef struct {
 mnv_node_t *mnv_get_node(mnv_node_type_t type);
 void mnv_free_node(mnv_node_t *node);
 void send_midi_packets (mnv_node_t *node, const MIDIPacketList *pktlist);
+void send_midi_key_packets (mnv_node_t *node, uint8_t *note);

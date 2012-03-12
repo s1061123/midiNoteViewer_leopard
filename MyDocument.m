@@ -28,11 +28,13 @@ static void MIDIInputProc(const MIDIPacketList *pktlist,
     //パケットリストからパケットの数を取得
     UInt32 packetCount = pktlist->numPackets;
     
+#if 0
 	if (node != NULL && node->type == TYPE_SERVER) {
 		send_midi_packets(node, pktlist);
 	}
+#endif	
 
-    for (NSInteger i = 0; i < packetCount; i++) {
+	for (NSInteger i = 0; i < packetCount; i++) {
         //data[0]からメッセージの種類とチャンネルを分けて取得する
         Byte mes = packet->data[0] & 0xF0;
         Byte ch = packet->data[0] & 0x0F;
@@ -309,14 +311,19 @@ static void MIDIInputProc(const MIDIPacketList *pktlist,
 	int sockfd = mnvNode->sockfd;
 #define	MNV_BUF_SIZE	1024
 	char buf[MNV_BUF_SIZE];
+#if 0
 	MIDIPacket *packet;
 	MIDIPacketList *pktList;
 	UInt32 pktCount;
-	
+#endif	
+
 	isClientRunning = TRUE;
 	NSLog(@"Client thread is started.");
 	while (recv(sockfd, buf, sizeof(buf), 0) != 0 && 
 		   isClientRunning) {
+		//XXX: Need mutex 
+		memcpy(midiNote, buf, MAX_MIDI_NOTE * sizeof(uint8_t));
+#if 0
 		pktList = (MIDIPacketList *)buf;
 		packet = (MIDIPacket *)&(pktList->packet[0]);
 		pktCount = pktList->numPackets;
@@ -343,6 +350,14 @@ static void MIDIInputProc(const MIDIPacketList *pktlist,
 			//次のパケットへ進む
 			packet = MIDIPacketNext(packet);
 		}
+#endif
 	}
+}
+
+- (IBAction)prefPanelHide:(id)sender {
+	[prefPanel close];
+}
+
+- (IBAction)prefPanelInit:(id)sender {
 }
 @end

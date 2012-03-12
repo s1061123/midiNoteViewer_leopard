@@ -152,3 +152,12 @@ void send_midi_packets (mnv_node_t *node, const MIDIPacketList *pktlist)
 					  (struct sockaddr *)&node->addr, sizeof(struct sockaddr_in));
 	assert(sz == send_len);
 }
+#define MAX_MIDI_NOTE		127
+void send_midi_key_packets (mnv_node_t *node, uint8_t *note) {
+	ssize_t send_len;
+	
+	send_len = sendto(node->sockfd, note, MAX_MIDI_NOTE * sizeof(uint8_t), 0,
+					  (struct sockaddr *)&node->addr, sizeof(struct sockaddr_in));
+
+	assert(send_len == MAX_MIDI_NOTE * sizeof(uint8_t));
+}

@@ -36,16 +36,21 @@
 	// 美学校: 15-6c
 #define MAX_MIDI_NOTE		127
 #define MAX_KEY_NOTE		88
-	int midiNote[MAX_MIDI_NOTE];
+	uint8_t midiNote[MAX_MIDI_NOTE];
 	
 	IBOutlet MyOpenGLView *glView;
 	IBOutlet NSComboBox *midiEndCombobox;
 	IBOutlet NSComboBoxCell *midiEndComboboxCell;
 	IBOutlet NSButton *midiServerButton;
+	IBOutlet NSSlider *prefOctBorder;
+	IBOutlet NSTextField *prefOctTxt;
+	IBOutlet NSPanel *prefPanel;
 }
 
 - (IBAction)midiSelected:(id)sender;
 - (IBAction)serverClicked:(id)sender;
+- (IBAction)prefPanelInit:(id)sender;
+- (IBAction)prefPanelHide:(id)sender;
 - (void)midiStartReceive:(int)index;
 - (BOOL)setMidiNoteOn:(uint)note;
 - (BOOL)setMidiNoteOff:(uint)note;

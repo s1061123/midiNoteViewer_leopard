@@ -64,10 +64,9 @@ const int COLOR_ELEMS  = 4;
 	const GLshort depthW = -1;
 	const GLshort depthB = 1;
 		
-#define DRAW_BORDER 1
-#ifdef DRAW_BORDER
 #define BORDER_LINES 15
 	const GLshort depthBd = 1;
+#ifdef ENABLE_BORDER
 	const GLshort BoldBorder[] = {
 		80, 20, depthBd,  80, 460, depthBd,
 		140, 20, depthBd, 140, 460, depthBd,
@@ -317,17 +316,19 @@ const int COLOR_ELEMS  = 4;
 		glDrawArrays(GL_LINE_LOOP, i*4, 4);
 	}
 	
-#ifdef DRAW_BORDER
-	glDisableClientState(GL_COLOR_ARRAY);
-	glVertexPointer(3, GL_SHORT, 0, BoldBorder);
-	for (int i = 0; i < BORDER_LINES; i++) {
-		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-		glLineWidth(2.0f);
-		glDrawArrays(GL_LINES, i*2, 2);
+#if 0
+	if ([doc getOctBorder] != 2.0) {
+		//NSLog(@"Change border! %f", [doc getOctBorder]);
+		glDisableClientState(GL_COLOR_ARRAY);
+		glVertexPointer(3, GL_SHORT, 0, BoldBorder);
+		for (int i = 0; i < BORDER_LINES; i++) {
+			glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+			glLineWidth([doc getOctBorder]);
+			glDrawArrays(GL_LINES, i*2, 2);
+		}
 	}
 #endif
 	
-	//[[self openGLContext] flushBuffer];
 }
 
 - (void)dealloc {
@@ -345,7 +346,8 @@ const int COLOR_ELEMS  = 4;
 	mach_timebase_info(&timebaseInfo);
 	// keep 60fps
 	uint64_t frameInterval = (uint64_t)(1000000000 / 60.0) * timebaseInfo.denom / timebaseInfo.numer;
-	
+	uint send_count = 0;
+		
 	uint64_t prevTime = mach_absolute_time();
 	mIsRunning = YES;
 	
@@ -356,14 +358,20 @@ const int COLOR_ELEMS  = 4;
 		CGLFlushDrawable(mCGLContext);
 		CGLUnlockContext(mCGLContext);
 		
+		if (send_count % 60 == 0) { 
+			NSLog(@"Send! %d", send_count);
+			send_count = 0;
+		}
+		send_count++;
+	
 		uint64_t endTime = prevTime + frameInterval;
-		
+
 		prevTime = mach_absolute_time();
 		if (endTime > prevTime) {
 			mach_wait_until(endTime);
 			prevTime = endTime;
 		}
-		
+
 	}
 	mIsFinished = YES;
 	[pool drain];
