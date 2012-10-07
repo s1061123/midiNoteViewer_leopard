@@ -56,7 +56,7 @@ static void MIDIInputProc(const MIDIPacketList *pktlist,
 
 	//if server, send notification to all clients.
 	if (node != NULL && node->type == TYPE_SERVER) {
-		send_midi_packets(node, pktlist);
+		send_midi_key_packets([doc getNode], [doc getMidiNoteTable]);
 	}
 	
 	[pool drain];
