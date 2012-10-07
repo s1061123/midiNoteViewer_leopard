@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreMIDI/CoreMIDI.h>
 #import "MyDocument.h"
+#import "network_mcast.h"
 #import "MyOpenGLView.h"
 
 static void MIDIInputProc(const MIDIPacketList *pktlist, 
@@ -28,12 +29,6 @@ static void MIDIInputProc(const MIDIPacketList *pktlist,
     //パケットリストからパケットの数を取得
     UInt32 packetCount = pktlist->numPackets;
     
-#if 0
-	if (node != NULL && node->type == TYPE_SERVER) {
-		send_midi_packets(node, pktlist);
-	}
-#endif	
-
 	for (NSInteger i = 0; i < packetCount; i++) {
         //data[0]からメッセージの種類とチャンネルを分けて取得する
         Byte mes = packet->data[0] & 0xF0;
@@ -58,6 +53,12 @@ static void MIDIInputProc(const MIDIPacketList *pktlist,
         //次のパケットへ進む
         packet = MIDIPacketNext(packet);
     }
+
+	//if server, send notification to all clients.
+	if (node != NULL && node->type == TYPE_SERVER) {
+		send_midi_packets(node, pktlist);
+	}
+	
 	[pool drain];
 }
 
@@ -268,7 +269,7 @@ static void MIDIInputProc(const MIDIPacketList *pktlist,
 	}
 }
 
-- (uint)getMidiNote:(uint)note {
+- (uint8_t)getMidiNote:(uint)note {
 	return midiNote[note];
 }
 
@@ -352,6 +353,10 @@ static void MIDIInputProc(const MIDIPacketList *pktlist,
 		}
 #endif
 	}
+}
+
+- (uint8_t *)getMidiNoteTable {
+	return midiNote;
 }
 
 - (IBAction)prefPanelHide:(id)sender {
