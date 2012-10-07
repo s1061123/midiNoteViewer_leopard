@@ -139,6 +139,7 @@ void mnv_free_node(mnv_node_t *node)
 	return;
 }
 
+#if 0
 void send_midi_packets (mnv_node_t *node, const MIDIPacketList *pktlist)
 {
 	ssize_t sz, send_len;
@@ -152,8 +153,11 @@ void send_midi_packets (mnv_node_t *node, const MIDIPacketList *pktlist)
 					  (struct sockaddr *)&node->addr, sizeof(struct sockaddr_in));
 	assert(sz == send_len);
 }
+#endif 
+
 #define MAX_MIDI_NOTE		127
-void send_midi_key_packets (mnv_node_t *node, uint8_t *note) {
+void send_midi_key_packets (mnv_node_t *node, uint8_t *note)
+{
 	ssize_t send_len;
 	
 	send_len = sendto(node->sockfd, note, MAX_MIDI_NOTE * sizeof(uint8_t), 0,

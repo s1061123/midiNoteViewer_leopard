@@ -54,6 +54,7 @@
 - (void)midiStartReceive:(int)index;
 - (BOOL)setMidiNoteOn:(uint)note;
 - (BOOL)setMidiNoteOff:(uint)note;
-- (uint)getMidiNote:(uint)note;
+- (uint8_t)getMidiNote:(uint)note;
+- (uint8_t *)getMidiNoteTable;
 @property (assign,getter=getNode)mnv_node_t* mnvNode;
 @end
